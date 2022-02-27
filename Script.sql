@@ -1,10 +1,10 @@
-IF NOT EXISTS( SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_NAME='TaStudent')
+IF NOT EXISTS( SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_NAME='Student')
 BEGIN
-CREATE TABLE [dbo].[TaStudent](
+CREATE TABLE [dbo].[Student](
 	[RollNo] [bigint] IDENTITY(1,1) NOT NULL,
 	[StudentName] [varchar](50) NULL,
 	[Department] [varchar](50) NULL,
- CONSTRAINT [PK_TaStudent] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_Student] PRIMARY KEY CLUSTERED 
 (
 	[RollNo] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
@@ -12,16 +12,16 @@ CREATE TABLE [dbo].[TaStudent](
 END
 GO
 ----/////////////////////////////////////////////////////////////////////////////////////////////
-IF NOT EXISTS( SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_NAME='TaResource')
+IF NOT EXISTS( SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_NAME='Resource')
 BEGIN
-CREATE TABLE [dbo].[TaResource](
+CREATE TABLE [dbo].[Resource](
 	[ID] [int] IDENTITY(1,1) NOT NULL,
 	[ResourceName] [varchar](50) NULL,
 	[StartDate] [date] NULL,
 	[EndDate] [date] NULL,
 	[StudentId] [int] NULL,
 	[ResourceExpiryStatus]  AS (case when getdate()>[EndDate] then (1) when getdate()<[EndDate] then (0)  end),
- CONSTRAINT [PK_TaResource] PRIMARY KEY CLUSTERED 
+ CONSTRAINT [PK_Resource] PRIMARY KEY CLUSTERED 
 (
 	[ID] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
@@ -47,17 +47,17 @@ BEGIN
 if(@flag = 0)
 BEGIN
 DECLARE @data INT
-SET @data = (select COUNT(*) from TaResource where ID = @id);
+SET @data = (select COUNT(*) from Resource where ID = @id);
 IF(@data = 0)
 BEGIN
-INSERT INTO TaResource(ResourceName
+INSERT INTO Resource(ResourceName
 ,StartDate
 ,EndDate)
 VALUES( @resourcename, @s_date, @e_date)
 END
 ELSE IF(@data = 1)
 BEGIN
-Update TaResource SET ResourceName = @resourcename, StartDate = @s_date, EndDate= @e_date where ID = @id
+Update Resource SET ResourceName = @resourcename, StartDate = @s_date, EndDate= @e_date where ID = @id
 END
 END
 END
@@ -80,21 +80,21 @@ BEGIN
 if(@flag = 0)
 BEGIN
 DECLARE @data INT
-SET @data = (select COUNT(*) from TaStudent where RollNo = @rollno);
+SET @data = (select COUNT(*) from Student where RollNo = @rollno);
 IF(@data = 0)
 BEGIN
-INSERT INTO TaStudent(StudentName
+INSERT INTO Student(StudentName
 ,Department)
 VALUES(@name, @department)
 END
 ELSE IF(@data = 1)
 BEGIN
-Update TaStudent SET StudentName = @name, Department = @department where RollNo = @rollno
+Update Student SET StudentName = @name, Department = @department where RollNo = @rollno
 END
 END
 ELSE IF(@flag = 1)
 BEGIN
-DELETE FROM TaStudent WHERE RollNo = @rollno
+DELETE FROM Student WHERE RollNo = @rollno
 END
 END
 GO
